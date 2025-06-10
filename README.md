@@ -1,6 +1,6 @@
-# VAPT Web Application
+# Scan.In (Vulnerability Detection)
 
-A web-based Vulnerability Assessment and Penetration Testing (VAPT) system that integrates OWASP ZAP and Nikto for scanning target URLs, displaying vulnerability results, and exporting scan reports.
+A web-based Vulnerability Assessment system that integrates OWASP ZAP and Nikto for scanning target URLs, displaying vulnerability results, and exporting scan reports.
 
 ## 🧩 Tech Stack
 
