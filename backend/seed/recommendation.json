@@ -800,5 +800,15 @@
     "risk":"Informational",
     "description": "Respons yang diberikan telah diidentifikasi mengandung token manajemen sesi. Kolom 'Other Info' berisi sekumpulan token header yang dapat digunakan dalam Metode Manajemen Sesi berbasis Header. Jika permintaan berada dalam konteks yang memiliki Metode Manajemen Sesi yang disetel ke 'Deteksi Otomatis', maka aturan ini akan mengubah metode manajemen sesi untuk menggunakan token-token yang telah diidentifikasi.",
     "solution": "Ini adalah peringatan informasional, bukan sebuah kerentanan, sehingga tidak ada yang perlu diperbaiki"
+  },
+  {
+    "alert_name": "X-XSS Protection header Not Found",
+    "pattern_match": [
+      "x-xss-protection header is not defined",
+      "x-xss-protection not set"
+    ],
+    "risk":"Sedang",
+    "description": "Header respons HTTP X-XSS-Protection adalah fitur pada Internet Explorer, Chrome, dan Safari yang menghentikan halaman dari pemuatan ketika mereka mendeteksi serangan cross-site scripting (XSS) yang dipantulkan (reflected). ",
+    "solution": "Gunakan CSP yang tidak mengizinkan penggunaan JavaScript Inline."
   }
 ]
