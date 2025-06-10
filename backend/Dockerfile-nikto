@@ -1,0 +1,5 @@
+FROM alpine/nikto
+
+# Install dependencies atau konfigurasi tambahan jika perlu
+
+CMD ["tail", "-f", "/dev/null"]

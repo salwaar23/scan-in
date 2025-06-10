@@ -1,0 +1,6 @@
+FROM zaproxy/zap-stable
+
+# Menjalankan ZAP dengan port 8080
+EXPOSE 8080
+
+CMD ["zap.sh"]

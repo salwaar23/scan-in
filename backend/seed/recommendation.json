@@ -1,0 +1,804 @@
+[
+  {
+    "alert_name": "Directory Browsing",
+    "pattern_match": [
+      "directory browsing",
+      "directory listing",
+      "index of /",
+      "directory has listing enabled",
+      "autoindex",
+      "directory index enabled",
+      "listing enabled"
+    ],
+    "risk": "Sedang",
+    "description": "Memungkinkan directory listing dapat dilihat. Directory listing mungkin membocorkan script tersembunyi, termasuk file, sumber file backup, dan lainnya yang bisa diakses untuk membaca informasi sensitif.",
+    "solution": "Non-aktifkan directory browsing. Jika diperlukan, pastikan daftar file tidak berisiko."
+  },
+  {
+    "alert_name": "Session ID in URL Rewrite",
+    "pattern_match": [
+      "sesion id in url rewrite"
+    ],
+    "risk": "Sedang",
+    "description": "URL rewrite digunakan untuk melacak session ID milik user atau pengguna. Session ID bisa terlihat oleh situs lain, tersimpan di riwayat browser, atau tercatat di log server, sehingga bisa disalahgunakan oleh orang yang tidak berwenang..",
+    "solution": "Untuk keamanan konten, simpan session ID pada cookie. Untuk tingkat keamanan yang lebih tinggi, gunakan kombinasi cookie dan URL rewrite."
+  },
+  {
+    "alert_name": "Referer Exposes Session ID",
+    "pattern_match": [
+      "referer exposes session id",
+      "session id in referer",
+      "leaked session id",
+      "session id exposed via referrer",
+      "referrer exposes session token",
+      "session token in referer"
+    ],
+    "risk": "Sedang",
+    "description": "Ditemukan sebuah tautan (hyperlink) yang mengarah ke nama host lain. Karena session ID disisipkan di URL (melalui URL rewrite), ID sesi tersebut bisa ikut terbawa dan terlihat di header Referer saat pengguna mengklik tautan ke situs eksternal. Hal ini berisiko membocorkan session ID kepada pihak luar.",
+    "solution": "Hal ini menjadi berisiko jika session ID bersifat sensitif dan tautan mengarah ke situs eksternal atau pihak ketiga. Untuk konten yang bersifat aman, sebaiknya simpan session ID di dalam cookie sesi yang aman (secure session cookie)."
+  },
+  {
+    "alert_name": "Path Traversal",
+    "pattern_match": [
+      "path traversal",
+      "directory traversal"
+    ],
+    "risk": "Tinggi",
+    "description": "Path Traversal adalah teknik serangan yang memungkinkan penyerang mengakses file atau direktori di luar folder utama website. Dengan memanipulasi URL menggunakan karakter khusus seperti '../', penyerang bisa membuka file sensitif atau kode sumber yang tidak seharusnya diakses.",
+    "solution": "Validasi dan batasi input pengguna, terutama parameter yang merujuk ke file. Gunakan whitelist untuk nama file, hindari penggunaan input mentah untuk mengakses file, dan simpan file sensitif di luar direktori yang bisa diakses melalui web."
+  },
+  {
+    "alert_name": "Remote File Inclusion",
+    "pattern_match": [
+      "Remote File Inclusion",
+      "RFI",
+      "include remote file"
+    ],
+    "risk": "Tinggi",
+    "description": "Remote File Inclusion (RFI) adalah kerentanan yang memungkinkan penyerang menyisipkan file dari server eksternal ke dalam aplikasi web. Hal ini bisa digunakan untuk menjalankan skrip berbahaya, mengambil alih server, atau mencuri data pengguna.",
+    "solution": "Validasi semua input yang digunakan untuk memuat file, gunakan whitelist untuk nama file yang diizinkan, dan nonaktifkan fitur 'allow_url_include' pada konfigurasi PHP (jika digunakan)."
+  },
+  {
+    "alert_name": "Vulnerable JS Library",
+    "pattern_match": [
+      "vulnerable js library",
+      "outdated js library",
+      "insecure js version"
+    ],
+    "risk": "Sedang",
+    "description": "Kerentanan ini terjadi ketika situs menggunakan pustaka JavaScript (library) yang sudah usang atau memiliki celah keamanan yang diketahui. Library yang rentan dapat dimanfaatkan oleh penyerang untuk menjalankan skrip berbahaya atau mencuri data pengguna.",
+    "solution": "Perbarui library yang digunakan ke versi yang paling terbaru."
+  },
+  {
+    "alert_name": "Tech Detection Passive Scanner",
+    "pattern_match": [
+      "tech detection",
+      "tech detection passive scanner"
+    ],
+    "risk": "Informational",
+    "description": "Teknologi \"Widgets\" berikut terdeteksi di aplikasi: Example Software. Ini hanya informasi tentang teknologi yang digunakan dan tidak menunjukkan adanya kerentanan.",
+    "solution": "-"
+  },
+  {
+    "alert_name": "Cookie No HttpOnly Flag",
+    "pattern_match": [
+      "cookie no httponly flag",
+      "httponly flag missing"
+    ],
+    "risk": "Rendah",
+    "description": "Sebuah cookie dibuat tanpa flag HttpOnly, artinya cookie tersebut bisa diakses oleh JavaScript. Jika ada skrip berbahaya yang dijalankan di halaman ini, cookie tersebut bisa dicuri dan dikirim ke situs lain. Jika cookie tersebut adalah cookie sesi, maka pencurian sesi (session hijacking) bisa terjadi.",
+    "solution": "Pastikan HttpOnly flag diatur untuk semua cookie"
+  },
+  {
+    "alert_name": "Cookie Without Secure Flag",
+    "pattern_match": [
+      "cookie without secure flag",
+      "cookie no secure",
+      "secure flag missing"
+    ],
+    "risk": "Rendah",
+    "description": "Sebuah cookie di-set tanpa secure flag yang artinya cookie dapat diakses melalui koneksi tanpa enkripsi",
+    "solution": "Selama cookie mengandung informasi sensitif atau token sesi, harus selalu dikirim melalui saluran yang terenkripsi. Pastikan flag Secure diaktifkan pada cookie yang berisi informasi sensitif tersebut."
+  },
+  {
+    "alert_name": "Re-examine Cache-control Directives",
+    "pattern_match": [
+      "re-examine cache-control directives",
+      "cache-control",
+      "cache directive"
+    ],
+    "risk": "Informational", 
+    "description": "Header cache-control belum diatur dengan benar atau tidak ada, sehingga browser dan proxy dapat menyimpan (cache) konten. Untuk file statis seperti CSS, JS, atau gambar, ini mungkin disengaja. Namun, sumber daya tersebut harus ditinjau agar tidak ada konten sensitif yang ikut tersimpan di cache.",
+    "solution": "Untuk konten yang aman, pastikan header HTTP cache-control diatur dengan nilai 'no-cache, no-store, must-revalidate'. Jika sebuah aset perlu di-cache, pertimbangkan untuk mengatur direktif seperti 'public, max-age, immutable'."
+  },
+  {
+    "alert_name": "Cross-Domain JavaScript Source File Inclusion",
+    "pattern_match": [
+      "cross-domain javascript source file inclusion"
+    ],
+    "risk": "Rendah",
+    "description": "Halaman memuat satu atau lebih file skrip dari domain pihak ketiga",
+    "solution": "Pastikan sumber file Javascript dimuat hanya dari sumber terpercaya dan tidak bisa dikontrol oleh pengguna aplikasi."
+  },
+  {
+    "alert_name": "Missing Anti-clickjacking Header",
+    "pattern_match": [
+      "Missing Anti-clickjacking Header",
+      "anti-clickjacking header not set",
+      "anti-clickjacking not set",
+      "click-jacking protection not set",
+      "the anti-clickjacking"
+    ],
+    "risk": "Sedang",
+    "description": "Respons tidak melindungi dari serangan 'Clickjacking'. Respons harus menyertakan header Content-Security-Policy dengan direktif frame-ancestors, atau X-Frame-Options",
+    "solution": "Browser modern sudah mendukung pengamanan lewat header Content-Security-Policy dan X-Frame-Options. Pastikan salah satu dari keduanya digunakan di setiap halaman web. Kalau misalkan halaman boleh dibuka dalam frame dari situs sendiri, gunakan SAMEORIGIN, tapi kalau tidak boleh dibuka sama sekali dalam frame, gunakan DENY, atau bisa juga menggunakan frame-ancestors dari content Security Policy."
+  },
+  {
+    "alert_name": "Multiple X-Frame-Options Header Entries",
+    "pattern_match": [
+      "multiple x-frame-options header entries",
+      "multiple XFO headers",
+      "duplicate x-frame-options"
+    ],
+    "risk": "Sedang",
+    "description": "Ditemukan lebih dari satu header X-Frame-Options dalam respons. Jika ada beberapa header seperti ini, beberapa browser mungkin tidak akan memprosesnya dengan benar atau tidak konsisten.",
+    "solution": "Pastikan hanya ada satu XFO yang muncul pada respons"
+  },
+  {
+    "alert_name": "X-Frame-Options Defined via META (Non-Compliant With Spec)",
+    "pattern_match": [
+      "x-frame-options defined via meta (non-compliant with specs)",
+      "x-frame-options defined in meta tag",
+      "non-compliant x-frame-options"
+    ],
+    "risk": "Sedang",
+    "description": "Meta tag X-Frame-Options(XFO) ditemukan, namun menetapkan XFO melalui tag META tidak dikudung secara resmi oleh spesifikasi (RFC 7034)",
+    "solution": "Pastikan X-Frame-Options diatur melalui respons header. Bisa juga dengan menerapkan Content Security Policy 'frame-ancestors'."
+  },
+  {
+    "alert_name": "X-Frame-Options Setting Malformed",
+    "pattern_match": [
+      "x-frame-options setting malformed"
+    ],
+    "risk": "Sedang",
+    "description": "X-Frame-Options ditemukan pada respons header tapi nilainya tidak diatur dengan tepat",
+    "solution": "Pastikan setting yang tepat digunakan pada semua halaman web yang dimuat pada situs anda dengan menetapkan SAMEORIGIN jika halaman tersebut boleh dimuat pada halaman lain di server anda dan gunakan DENY jika halaman tersebut tidak boleh dimuat sama sekali dalam frame."
+  },
+  {
+    "alert_name": "X-Content-Type-Options Header Missing",
+    "pattern_match": [
+      "x-content-type-options header missing",
+      "the x-content-type-options header not set",
+      "missing x-content-type-options",
+      "the x-content-type",
+      "x content type",
+      "content-type",
+      "x-content-type"
+    ],
+    "risk": "Rendah",
+    "description": "Header Anti-MIME-Sniffing X-Content-Type-Options tidak disetel ke nilai 'nosniff'. Hal ini memungkinkan versi lama dari Internet Explorer dan Chrome melakukan MIME-sniffing terhadap isi respons, yang bisa menyebabkan isi tersebut ditafsirkan dan ditampilkan sebagai tipe konten yang berbeda dari yang sebenarnya telah ditentukan.",
+    "solution": "Pastikan bahwa aplikasi atau server web mengatur header Content-Type dengan benar, dan juga menyetel header X-Content-Type-Options ke nilai 'nosniff' untuk semua halaman web. Jika memungkinkan, pastikan pengguna akhir menggunakan browser modern yang sesuai standar dan tidak melakukan MIME-sniffing, atau browser yang dapat diarahkan oleh aplikasi atau server web untuk tidak melakukan MIME-sniffing sama sekali."
+  },
+  {
+    "alert_name": "Information Disclosure - Debug Error Messages",
+    "pattern_match": [
+      "debug error messages",
+      "information disclosure - debug error messages"
+    ],
+    "risk": "Rendah",
+    "description": "Respons memuat pesan kesalahan umum yang biasanya dikembalikan oleh platform seperti ASP.NET, serta web server seperti IIS dan Apache. Anda bisa mengkonfigurasi daftar pesan debug ini",
+    "solution": "Matikan pesan debug sebelum dilakukan produksi"
+  },
+  {
+    "alert_name": "Information Disclosure - Sensitive Information in URL",
+    "pattern_match": [
+      "sensitive information in URL",
+      "information disclosure - sensitive information in URL"
+    ],
+    "risk": "Informational",
+    "description": "Permintaan tampaknya mengandung informasi sensitif yang bocor melalui URL. Hal ini dapat melanggar standar PCI dan sebagian besar kebijakan kepatuhan organisasi. Anda dapat mengatur daftar kata kunci untuk pemeriksaan ini agar sesuai dengan kebutuhan lingkungan Anda, dengan menambah atau menghapus nilai tertentu.",
+    "solution": "Jangan biarkan informasi sensitif melalui URI (alamat URL)"
+  },
+  {
+    "alert_name": "Information Disclosure - Sensitive Information in HTTP Referrer Header",
+    "pattern_match": [
+      "sensitive information in http referrer header",
+      "information disclosure - sensitive information in http referrer header"
+    ],
+    "risk": "Informational",
+    "description": "Header HTTP mungkin telah membocorkan parameter yang berpotensi sensitif ke domain lain. Hal ini dapat melanggar standar PCI dan sebagian besar kebijakan kepatuhan organisasi. Anda dapat mengatur daftar kata kunci untuk pemeriksaan ini agar sesuai dengan kebutuhan lingkungan Anda, dengan menambah atau menghapus nilai tertentu.",
+    "solution": "Jangan biarkan informasi sensitif melalui URI (alamat URL)"
+  },
+  {
+    "alert_name": "Information Disclosure - Suspicious Comments",
+    "pattern_match": [
+      "suspicious comments",
+      "information disclosure - suspicious comments"
+    ],
+    "risk": "Informational",
+    "description": "Respons dari server mengandung komentar mencurigakan yang bisa memberikan petunjuk atau informasi berguna bagi attacker.",
+    "solution": "Hapus semua komentar yang memberikan informasi yang mungkin membantu attacker dan perbaiki masalah yang disebutkan pada komentar tersebut jika ada"
+  },
+  {
+    "alert_name": "Off-site Redirect",
+    "pattern_match": [
+      "off-site redirect"
+    ],
+    "risk": "Tinggi",
+    "description": "Open redirect terjadi ketika sebuah aplikasi mengizinkan input dari pengguna (misalnya: https://nottrusted.com) untuk mengontrol tujuan pengalihan (redirect) ke situs luar. \nContohnya, seorang penyerang bisa mengirimkan tautan seperti: \nhttps://example.com/example.php?url=https://malicious.example.com \nyang jika diklik, akan mengalihkan pengguna ke situs berbahaya.",
+    "solution": "Untuk menghindari kerentanan open redirect, semua parameter yang menerima URL tujuan redirect harus divalidasi sebelum mengirimkan kode HTTP 302 (redirect) ke browser pengguna. Terapkan fungsi redirect yang aman dengan hanya mengizinkan pengalihan ke URI relatif (dalam domain yang sama) atau ke daftar domain terpercaya saja."
+  },
+  {
+    "alert_name": "Cookie Poisoning",
+    "pattern_match": [
+      "cookie poisoning"
+    ],
+    "risk": "Informational",
+    "description": "Pemeriksaan ini melihat input yang diberikan pengguna pada parameter query string dan data POST untuk mengidentifikasi apakah parameter cookie bisa dikendalikan. Ini disebut serangan cookie poisoning, yang bisa dieksploitasi jika penyerang dapat memanipulasi cookie dengan berbagai cara. Dalam beberapa kasus, hal ini mungkin tidak dapat dieksploitasi, namun membiarkan parameter URL mengatur nilai cookie umumnya dianggap sebagai sebuah celah keamanan.",
+    "solution": "Jangan biarkan input pengguna mengontrol nama dan nilai cookie. Jika beberapa parameter query string harus disimpan dalam nilai cookie, pastikan untuk memfilter karakter titik koma (;) yang bisa digunakan sebagai pemisah pasangan nama/nilai."
+  },
+  {
+    "alert_name": "User Controllable Charset",
+    "pattern_match": [
+      "user controllable charset"
+    ],
+    "risk": "Informational",
+    "description": "Jika penyerang bisa mengontrol charset respons, mereka bisa memanipulasi HTML untuk melakukan serangan seperti XSS. Misalnya, jika penyerang mengatur charset ke UTF-7, mereka dapat menyisipkan kode berbahaya yang melewati proteksi XSS di server dan menjalankan skrip jahat di halaman tersebut.",
+    "solution": "Paksa penggunaan UTF-8 pada semua deklarasi charset. Jika charset harus ditentukan berdasarkan input pengguna, pastikan hanya nilai dari daftar yang diizinkan yang digunakan."
+  },
+  {
+    "alert_name": "User Controllable HTML Element Attribute (Potential XSS)",
+    "pattern_match": [
+      "user controllable html element attribute (potential xss)"
+    ],
+    "risk": "Informational",
+    "description": "Pemeriksaan ini mengidentifikasi input pengguna di parameter query dan data POST yang bisa mengontrol nilai atribut HTML. Ini membantu menemukan potensi titik rawan XSS yang perlu ditinjau lebih lanjut oleh analis keamanan untuk memastikan apakah dapat dieksploitasi.",
+    "solution": "Validasi semua input dan sanitasi output-nya sebelum menuliskannya ke atribut html"
+  },
+  {
+    "alert_name": "Potential IP Addresses Found in the Viewstate",
+    "pattern_match": [
+      "potential ip addressess found in the viewstate"
+    ],
+    "risk": "Sedang",
+    "description": "Ditemukan alamat IP potensial dalam field viewstate",
+    "solution": "Pastikan informasi yang diberikan bukan informasi rahasia"
+  },
+  {
+    "alert_name": "Emails Found in The Viewstate",
+    "pattern_match": [
+      "emails found in the viewstate"
+    ],
+    "risk": "Sedang",
+    "description": "Ditemukan alamat email dalam field viewstate",
+    "solution": "Pastikan informasi yang diberikan bukan informasi rahasia"
+  },
+  {
+    "alert_name": "Old ASP.Net Version in Use",
+    "pattern_match": [
+      "old asp.net version in use"
+    ],
+    "risk": "Rendah",
+    "description": "Website menggunakan ASP.NET versi 1.0 atau 1.1",
+    "solution": "Pastikan framework masih didukung oleh microsoft"
+  },
+  {
+    "alert_name": "Viewstate Without MAC Signature (Unsure)",
+    "pattern_match": [
+      "viewstate without mac signature (unsure)"
+    ],
+    "risk": "Tinggi",
+    "description": "Website menggunakan viestate ASP.NET tanpa MAC apapun",
+    "solution": "Pastikan MAC diatur untuk semua halaman pada website"
+  },
+  {
+    "alert_name": "Viewstate Without MAC Signature (Sure)",
+    "pattern_match": [
+      "viewstate without mac signature (sure)"
+    ],
+    "risk": "Tinggi",
+    "description": "Website menggunakan viestate ASP.NET tanpa MAC apapun",
+    "solution": "Pastikan MAC diatur untuk semua halaman pada website"
+  },
+  {
+    "alert_name": "Split Viewstate in Use",
+    "pattern_match": [
+      "split viestate in use"
+    ],
+    "risk": "Informational",
+    "description": "Website menggunakan viestate ASP.NET dan nilainya dibagi menjadi beberapa bagian",
+    "solution": "Tidak ada — ini mungkin merupakan pengaturan yang sengaja diubah karena ini bukan pengaturan bawaan (default)."
+  },
+  {
+    "alert_name": "Heartbleed OpenSSL Vulnerability (indicative)",
+    "pattern_match": [
+      "heartbleed openssl vulnerability (indicative)"
+    ],
+    "risk": "Tinggi",
+    "description": "OpenSSL versi lama (sebelum 1.0.1g) memiliki celah keamanan di fitur Heartbeat yang bisa dimanfaatkan penyerang untuk mencuri data rahasia dari memori server.",
+    "solution": "perbarui OpenSSL ke versi 1.0.1g atau yang lebih terbaru. Setelah itu, buat ulang sertifikat HTTPS dan ganti kunci privat asimetris serta kunci rahasia bersama, karena kunci tersebut mungkin sudah bocor meski belum ada tanda-tanda pada log server."
+  },
+  {
+    "alert_name": "Strict-Transport-Security Header Not Set",
+    "pattern_match": [
+      "strict-transport-security header not set"
+    ],
+    "risk": "Rendah",
+    "description": "HSTS memastikan browser selalu terhubung ke situs menggunakan koneksi yang aman (HTTPS), mencegah koneksi lewat HTTP yang tidak terenkripsi.",
+    "solution": "Pastikan server web, server aplikasi, load balancer, dan perangkat terkait lainnya dikonfigurasi untuk menerapkan Strict-Transport-Security (HSTS) dengan benar."
+  },
+  {
+    "alert_name": "Strict-Transport-Security Disabled",
+    "pattern_match": [
+      "strict-transport-security disabled"
+    ],
+    "risk": "Rendah",
+    "description": "Ditemukan header HTTP Strict Transport Security (HSTS), tetapi berisi directive max-age=0 yang menonaktifkan kontrol ini dan menginstruksikan browser untuk menghapus pengaturan HSTS sebelumnya. HSTS adalah kebijakan keamanan web yang membuat browser hanya berinteraksi dengan server melalui koneksi HTTPS yang aman.",
+    "solution": "Tinjau kembali pengaturan kontrol ini. Pastikan web server, application server, load balancer, dan lain-lain dikonfigurasi untuk mengatur Strict-Transport-Security dengan nilai max-age yang sesuai."
+  },
+  {
+    "alert_name": "Strict-Transport-Security Multiple Header Entries (Non-compliant witch Spec)",
+    "pattern_match": [
+      "strict-transport-security multiple header entries (non-compliant with spec)"
+    ],
+    "risk": "Rendah",
+    "description": "Ditemukan lebih dari satu header HSTS, tapi hanya yang pertama diproses. Ini bisa menyebabkan pengaturan keamanan tidak berjalan dengan benar. HSTS memastikan browser hanya menggunakan koneksi HTTPS yang aman.",
+    "solution": "Pastikan hanya satu komponen dalam sistem Anda—seperti kode aplikasi, web server, server aplikasi, atau load balancer—yang mengatur atau menambahkan header HTTP Strict-Transport-Security (HSTS)."
+  },
+  {
+    "alert_name": "Strict-Transport-Security Header on Plain HTTP Response",
+    "pattern_match": [
+      "strict-transport-security header on plain http response"
+    ],
+    "risk": "Informational",
+    "description": "Ditemukan header HTTP Strict Transport Security (HSTS), namun header HSTS diabaikan pada respons yang menggunakan koneksi biasa (non-HTTPS). HSTS adalah mekanisme keamanan web yang membuat browser hanya berkomunikasi melalui koneksi HTTPS yang aman (HTTP di atas TLS/SSL).",
+    "solution": "Periksa pengaturan kontrol ini. Pastikan web server, application server, load balancer, dan komponen terkait lainnya dikonfigurasi untuk menetapkan Strict-Transport-Security hanya pada respons HTTPS."
+  },
+  {
+    "alert_name": "Server Leaks its Webserver Application via 'server' HTTP Response Header Field",
+    "pattern_match": [
+      "server leaks its webserver application via 'server' http response header field",
+      "uncommon header"
+    ],
+    "risk": "Informational",
+    "description": "Server web atau aplikasi mengungkapkan jenis server yang digunakan melalui header HTTP “Server” pada respons. Informasi ini dapat memudahkan penyerang untuk mengenali kerentanan lain yang mungkin ada pada server web atau aplikasi Anda. Meskipun informasi ini saja, tanpa versi server, tidak terlalu berbahaya, tetap saja keberadaannya dalam header respons hampir selalu tidak berguna dan bisa menjadi celah bagi penyerang.",
+    "solution": "Pastikan server web, server aplikasi, load balancer, dan perangkat lain dalam sistem Anda dikonfigurasi untuk menyembunyikan header 'Server' atau hanya menampilkan informasi yang umum saja."
+  },
+  {
+    "alert_name": "Server Leaks its Webserver Application via 'server' HTTP Response Header Field",
+    "pattern_match": [
+      "server leaks its webserver application via 'server' http response header field",
+      "uncommon header"
+    ],
+    "risk": "Rendah",
+    "description": "Server web atau aplikasi mengungkapkan jenis server yang digunakan melalui header HTTP “Server” pada respons. Informasi ini dapat memudahkan penyerang untuk mengenali kerentanan lain yang mungkin ada pada server web atau aplikasi Anda. Meskipun informasi ini saja, tanpa versi server, tidak terlalu berbahaya, tetap saja keberadaannya dalam header respons hampir selalu tidak berguna dan bisa menjadi celah bagi penyerang.",
+    "solution": "Pastikan server web, server aplikasi, load balancer, dan perangkat lain dalam sistem Anda dikonfigurasi untuk menyembunyikan header 'Server' atau hanya menampilkan informasi yang umum saja."
+  },
+  {
+    "alert_name": "Server Leaks Information via 'X-Powered-By' HTTP Response Header Field(s)",
+    "pattern_match": [
+      "Server Leaks Information via 'X-Powered-By' HTTP Response Header Field(s)",
+      "x-powered-by",
+      "uncommon header 'x-'"
+    ],
+    "risk": "Rendah",
+    "description": "Server web/aplikasi membocorkan informasi melalui satu atau lebih header HTTP respons “X-Powered-By”. Informasi ini dapat memudahkan penyerang untuk mengenali framework atau komponen lain yang digunakan oleh aplikasi web Anda serta kerentanan yang mungkin dimiliki oleh komponen tersebut.",
+    "solution": "Pastikan server web, server aplikasi, load balancer, dan perangkat lain dalam sistem Anda dikonfigurasi untuk menyembunyikan header 'Server' atau hanya menampilkan informasi yang umum saja."
+  },
+  {
+    "alert_name": "Obsolete Content Security Policy (CSP) Header Found",
+    "pattern_match": [
+      "obsolete content security policy (csp) header found"
+    ],
+    "risk": "Informational",
+    "description": "'X-Content-Security-Policy' and 'X-WebKit-CSP' header tidak lagi direkomendasikan",
+    "solution": "Pastikan server web, server aplikasi, load balancer, dan perangkat lain dalam sistem Anda dikonfigurasi untuk mengatur header CSP."
+  },
+  {
+    "alert_name": "Content Security Policy (CSP) Report-Only Header Found",
+    "pattern_match": [
+      "content security policy (csp) report-only header found"
+    ],
+    "risk": "Informational",
+    "description": "Respons mengandung header Content-Security-Policy-Report-Only, yang mungkin menunjukkan implementasi yang masih dalam tahap pengujian (work-in-progress), atau kelalaian saat memindahkan konfigurasi dari lingkungan pra-produksi ke produksi.",
+    "solution": "Pastikan server web, server aplikasi, load balancer, dan perangkat lain dalam sistem Anda dikonfigurasi untuk mengatur header CSP."
+  },
+  {
+    "alert_name": "Content Security Policy (CSP) Header Not Set",
+    "pattern_match": [
+      "content security policy (csp) Header Not Set"
+    ],
+    "risk": "Sedang",
+    "description": "Content Security Policy (CSP) adalah lapisan keamanan tambahan yang membantu mendeteksi dan mengurangi jenis serangan tertentu, termasuk Cross Site Scripting (XSS) dan serangan injeksi data. Serangan-serangan ini dapat digunakan untuk berbagai tujuan, mulai dari pencurian data, pengubahan tampilan situs (defacement), hingga penyebaran malware.\nCSP menyediakan serangkaian header HTTP standar yang memungkinkan pemilik situs web untuk mendeklarasikan sumber konten yang diizinkan untuk dimuat oleh browser pada halaman tersebut. Jenis konten yang dicakup meliputi JavaScript, CSS, frame HTML, font, gambar, serta objek yang dapat disematkan seperti Java applet, ActiveX, file audio dan video.",
+    "solution": "Pastikan server web, server aplikasi, load balancer, dan perangkat lain dalam sistem Anda dikonfigurasi untuk mengatur header CSP."
+  },
+  {
+    "alert_name": "X-Backend-Server Header Information Leak",
+    "pattern_match": [
+      "x-backend-server header information leak"
+    ],
+    "risk": "Rendah",
+    "description": "Server membocorkan informasi terkait sistem backend (seperti hostname atau alamat IP). Dengan informasi ini, penyerang dapat menyerang sistem lain atau menyerang sistem tersebut secara lebih langsung dan efisien.",
+    "solution": "Pastikan server web, server aplikasi, load balancer, dan perangkat lain dalam sistem Anda dikonfigurasi untuk menyembunyikan header X-Backend-Server."
+  },
+  {
+    "alert_name": "Secure Pages Include Mixed Content",
+    "pattern_match": [
+      "secure pages include mixed content"
+    ],
+    "risk": "Rendah",
+    "description": "Halaman tersebut memuat konten campuran (mixed content), yaitu konten yang diakses melalui HTTP, bukan HTTPS.",
+    "solution": "Sebuah halaman yang tersedia melalui SSL/TLS harus sepenuhnya terdiri dari konten yang dikirimkan menggunakan SSL/TLS. Halaman tersebut tidak boleh mengandung konten apa pun yang dikirimkan melalui HTTP yang tidak terenkripsi. Ini juga termasuk konten dari situs pihak ketiga."
+  },
+  {
+    "alert_name": "HTTP to HTTPS Insecure Transition in Form Post",
+    "pattern_match": [
+      "HTTP to HTTPS Insecure Transition in Form Post"
+    ],
+    "risk": "Sedang",
+    "description": "Pemeriksaan ini mencari halaman HTTP yang tidak aman namun memiliki formulir HTTPS. Masalahnya adalah halaman HTTP yang tidak aman tersebut mudah disusupi melalui serangan Man-in-the-Middle (MITM), sehingga formulir HTTPS yang aman bisa diganti atau dipalsukan oleh penyerang.",
+    "solution": "Gunakan HTTPS untuk halaman utama (landing page) yang memuat formulir yang membutuhkan keamanan."
+  },
+  {
+    "alert_name": "User Controllable JavaScript Event (XSS)",
+    "pattern_match": [
+      "User Controllable JavaScript Event (XSS)"
+    ],
+    "risk": "Sedang",
+    "description": "membantu menemukan titik rawan XSS (cross-site scripting) yang perlu ditinjau lebih lanjut oleh analis keamanan untuk menentukan apakah bisa dieksploitasi.",
+    "solution": "Validasi semua input dan sanitasi output sebelum dituliskan ke dalam atribut event JavaScript seperti onload, onclick, dan lainnya."
+  },
+  {
+    "alert_name": "Big Redirect Detected (Potential Sensitive Information Leak)",
+    "pattern_match": [
+      "Big Redirect Detected (Potential Sensitive Information Leak)"
+    ],
+    "risk": "Rendah",
+    "description": "Server merespons dengan pengalihan (redirect) yang disertai dengan respons body berukuran besar. Hal ini dapat mengindikasikan bahwa meskipun server mengarahkan ulang permintaan, ia tetap mengirimkan konten tambahan dalam respons tersebut—yang mungkin mengandung informasi sensitif atau PII (Personally Identifiable Information).",
+    "solution": "Pastikan tidak ada informasi sensitif yang bocor melalui respons redirect. Respons redirect seharusnya hampir tidak mengandung konten apa pun."
+  },
+  {
+    "alert_name": "Multiple HREFs Redirect Detected (Potential Sensitive Information Leak)",
+    "pattern_match": [
+      "Multiple HREFs Redirect Detected (Potential Sensitive Information Leak)"
+    ],
+    "risk": "Rendah",
+    "description": "Server memberikan respons redirect yang tampaknya mengandung banyak tautan. Hal ini dapat menunjukkan bahwa meskipun server mengarahkan ulang, ia juga mengirimkan konten dalam body respons yang memuat tautan (yang mungkin berisi informasi sensitif, data pribadi seperti PII, atau mengarah ke panel admin, dan sebagainya).",
+    "solution": "Pastikan tidak ada informasi sensitif yang bocor melalui respons redirect. Respons redirect seharusnya memiliki konten seminimal mungkin, idealnya tanpa body yang mengandung data atau tautan tambahan."
+  },
+  {
+    "alert_name": "Source Code Disclosure - /WEB-INF Folder",
+    "pattern_match": [
+      "Source Code Disclosure - /WEB-INF Folder"
+    ],
+    "risk": "Tinggi",
+    "description": "Kode sumber Java terungkap oleh web server melalui file kelas Java (.class) di folder WEB-INF. File .class tersebut dapat dibongkar (disassemble) menjadi kode sumber yang hampir identik dengan kode aslinya, sehingga berpotensi membocorkan logika aplikasi, kredensial, atau informasi sensitif lainnya kepada penyerang.",
+    "solution": "Server web harus dikonfigurasi agar tidak menyajikan folder /WEB-INF atau isinya kepada browser, karena folder ini berisi informasi sensitif seperti kode sumber Java yang telah dikompilasi dan file properti yang bisa menyimpan kredensial."
+  },
+  {
+    "alert_name": "Retrieved from Cache",
+    "pattern_match": [
+      "Retrieved from Cache"
+    ],
+    "risk": "Informational",
+    "description": "Konten halaman diambil dari cache bersama. Jika data yang dikembalikan bersifat sensitif, pribadi, atau khusus untuk pengguna tertentu, maka informasi tersebut berisiko bocor ke pengguna lain. Dalam beberapa kasus, hal ini bahkan bisa menyebabkan pengambilalihan sesi pengguna lain, tergantung pada konfigurasi server cache (seperti proxy) yang digunakan.",
+    "solution": "Validasi bahwa respons tidak berisi informasi sensitif, pribadi, atau spesifik pengguna. \nContoh: \nCache-Control: no-cache, no-store, must-revalidate, private. \nTujuannya untuk menintruksikan server cache HTTP 1.0 dan 1.1 agar tidak menyimpan atau menyajikan ulang respons tersebut tanpa validasi"
+  },
+  {
+    "alert_name": "X-ChromeLogger-Data (XCOLD) Header Information Leak",
+    "pattern_match": [
+      "X-ChromeLogger-Data (XCOLD) Header Information Leak"
+    ],
+    "risk": "Sedang",
+    "description": "Server mengungkapkan informasi melalui header respons X-ChromeLogger-Data (atau X-ChromePhp-Data). informasi ini dapat dikonstumisasi oleh pengembang, namun sering kali ditemukan informasi sensitif sehingga berisiko dimanfaatkan oleh attacker untuk memahami struktutr dan konfigurasi sistem backend yang bisa memperbesar peluang serangan",
+    "solution": "Nonaktifkan fungsi ini di lingkungan produksi jika dapat membocorkan informasi yang dapat dimanfaatkan oleh penyerang."
+  },
+  {
+    "alert_name": "Cookie without SameSite Attribute",
+    "pattern_match": [
+      "Cookie without SameSite Attribute"
+    ],
+    "risk":"Rendah",
+    "description": "cookie telah diatur tanpa atribut SameSite, yang berarti cookie tersebut dapat dikirimkan sebagai hasil dari permintaan 'cross-site' (lintas situs). Atribut SameSite merupakan langkah efektif untuk mencegah serangan seperti cross-site request forgery (CSRF), cross-site script inclusion, dan serangan timing.",
+    "solution": "Pastikan atribut SameSite diatur menjadi 'lax' atau, yang paling ideal, 'strict' untuk semua cookie."
+  },
+  {
+    "alert_name": "X-Debug-Token Information Leak",
+    "pattern_match": [
+      "X-Debug-Token Information Leak"
+    ],
+    "risk":"Rendah",
+    "description": "Respon mengandung header X-Debug-Token atau X-Debug-Token-Link. Ini menunjukkan bahwa Symfony's Profiler mungkin sedang aktif dan dapat mengekspos data sensitif.",
+    "solution": "Batasi akses ke Symfony's Profiler, baik melalui mekanisme autentikasi/otorisasi atau dengan membatasi penyertaan header hanya untuk klien tertentu (misalnya berdasarkan IP)."
+  },
+  {
+    "alert_name": "Username Hash Found",
+    "pattern_match": [
+      "Username Hash Found"
+    ],
+    "risk":"Informational",
+    "description": "Ditemukan hash dari username (admin) dalam respons. Hal ini dapat mengindikasikan aplikasi rentan terhadap kerentanan Insecure Direct Object Reference (IDOR). Diperlukan pengujian manual untuk memastikan apakah temuan ini bisa dieksploitasi.",
+    "solution": "Gunakan referensi objek tidak langsung yang spesifik per pengguna atau sesi (buat pemetaan sementara saat penggunaan). Atau, pastikan setiap penggunaan referensi objek langsung selalu disertai pemeriksaan otorisasi untuk memastikan pengguna berhak mengakses objek yang diminta."
+  },
+  {
+    "alert_name": "GET for POST",
+    "pattern_match": [
+      "GET for POST"
+    ],
+    "risk":"Informational",
+    "description": "Permintaan yang awalnya dikirim sebagai POST juga diterima sebagai GET. Meskipun masalah ini bukan kelemahan keamanan secara langsung, hal ini dapat mempermudah pelaksanaan serangan lain. Misalnya, jika POST tersebut rentan terhadap Cross-Site Scripting (XSS), maka kemungkinan serangan XSS yang lebih sederhana berbasis GET juga mungkin terjadi.",
+    "solution": "Pastikan hanya metode POST yang diterima pada endpoint yang memang mengharapkan metode POST."
+  },
+  {
+    "alert_name": "X-AspNet-Version Response Header",
+    "pattern_match": [
+      "X-AspNet-Version Response Header"
+    ],
+    "risk":"Rendah",
+    "description": "Server membocrokan informasi via 'X-AspNet-Version'/'X-AspNetMvc-Version melalui HTTP respons",
+    "solution": "Konfigurasi server agar aplikasi web tidak mengembalikan header tersebut sebagai respons"
+  },
+  {
+    "alert_name": "PII Disclosure",
+    "pattern_match": [
+      "PII Disclosure"
+    ],
+    "risk":"Tinggi",
+    "description": "Respons tersebut mengandung Informasi Identitas Pribadi (Personally Identifiable Information/PII), seperti nomor kartu kredit (CC), nomor jaminan sosial (SSN), dan data sensitif serupa lainnya.",
+    "solution": "Periksa respons untuk kemungkinan adanya Informasi Identitas Pribadi (PII). Pastikan aplikasi tidak membocorkan data sensitif apa pun."
+  },
+  {
+    "alert_name": "Timestamp Disclosure - Unix",
+    "pattern_match": [
+      "Timestamp Disclosure - Unix"
+    ],
+    "risk":"Rendah",
+    "description": "Aplikasi atau server web mengungkapkan cap waktu (timestamp) dalam format Unix.",
+    "solution": "Pastikan secara manual timestamp data bukanlah hal sensitif dan data tidak bisa digunakan untuk pola serangan"
+  },
+  {
+    "alert_name": "Hash Disclosure - MD4 / MD5",
+    "pattern_match": [
+      "Hash Disclosure - MD4 / MD5"
+    ],
+    "risk":"Rendah",
+    "description": "Hash dibocorkan oleh web server. -MD4/MD5",
+    "solution": "Pastikan hash yang digunakan untuk melindungi kredensial atau sumber daya lainnya tidak bocor melalui server web atau database. Biasanya, hash password tidak perlu diakses oleh browser web."
+  },
+  {
+    "alert_name": "Cross-Domain Misconfiguration",
+    "pattern_match": [
+      "Cross-Domain Misconfiguration"
+    ],
+    "risk":"Sedang",
+    "description": "Loading data dari browser web mungkin memungkinkan karena konfigurasi Cross Origin Resource Sharing (CORS) yang salah pada server web.",
+    "solution": "Pastikan data sensitif tidak dapat diakses tanpa autentikasi (misalnya dengan menggunakan daftar putih alamat IP). Konfigurasikan header HTTP 'Access-Control-Allow-Origin' hanya untuk domain yang lebih terbatas, atau hapus seluruh header CORS agar browser web dapat menerapkan Same Origin Policy (SOP) secara lebih ketat."
+  },
+  {
+    "alert_name": "User Agent Fuzzer",
+    "pattern_match": [
+      "User Agent Fuzzer"
+    ],
+    "risk":"Informational",
+    "description": "Periksa perbedaan respons berdasarkan User Agent yang di-fuzzing (misalnya situs mobile, akses sebagai Search Engine Crawler). Bandingkan status kode respons dan hash dari isi respons dengan respons asli.",
+    "solution": "-"
+  },
+  {
+    "alert_name": "Authentication Credentials Captured",
+    "pattern_match": [
+      "Authentication Credentials Captured"
+    ],
+    "risk":"Sedang",
+    "description": "Mekanisme otentikasi yang tidak aman digunakan. Hal ini memungkinkan penyerang di jaringan untuk mendapatkan userid dan password pengguna yang terautentikasi.",
+    "solution": "Gunakan HTTPS dan mekanisme otentikasi yang aman yang tidak mengirimkan userid atau password secara tidak terenkripsi. Hindari terutama penggunaan Basic Authentication, karena mekanisme ini hanya sekadar penyamaran sederhana yang mudah dibobol."
+  },
+  {
+    "alert_name": "Weak Authentication Method",
+    "pattern_match": [
+      "Weak Authentication Method"
+    ],
+    "risk":"Sedang",
+    "description": "Penggunaan HTTP Basic atau Digest Authentication dilakukan melalui koneksi yang tidak aman (tanpa enkripsi). Akibatnya, kredensial (username dan password) dapat dibaca dan disalahgunakan oleh pihak yang memiliki akses ke jaringan.",
+    "solution": "Lindungi koneksi menggunakan HTTPS atau gunakan mekanisme autentikasi yang kuat"
+  },
+  {
+    "alert_name": "Reverse Tabnabbing",
+    "pattern_match": [
+      "Reverse Tabnabbing"
+    ],
+    "risk":"Sedang",
+    "description": "Ada satu atau lebih link di halaman ini yang berbahaya karena menggunakan target tanpa menambahkan rel='noopener noreferrer'. Akibatnya, halaman yang dibuka lewat link tersebut bisa mengambil alih kontrol halaman asal.",
+    "solution": "Jangan menggunakan atribut target, atau jika harus digunakan, pastikan gunakan rel='noopener noreferrer' agar halaman tujuan tidak bisa mengambil alih halaman asal."
+  },
+  {
+    "alert_name": "Modern Web Application",
+    "pattern_match": [
+      "Modern Web Application"
+    ],
+    "risk":"Informational",
+    "description": "Aplikasi terdeteksi sebagai aplikasi web modern",
+    "solution": "Hanya informasi alert tidak perlu perbaikan."
+  },
+  {
+    "alert_name": "Script Served From Malicious Domain (polyfill)",
+    "pattern_match": [
+      "Script Served From Malicious Domain (polyfill)"
+    ],
+    "risk":"Tinggi",
+    "description": "Halaman ini memuat satu atau lebih file skrip dari domain 'polyfill' yang tidak terkait dengan perpustakaan polyfill.js resmi, dan domain tersebut diketahui menyebarkan konten berbahaya.",
+    "solution": "Ganti semua skrip yang dimuat agar menggunakan sumber (source) terpercaya dan resmi sesuai dokumentasi resminya."
+  },
+  {
+    "alert_name": "Remote Code Execution - CVE-2012-1823",
+    "pattern_match": [
+      "Remote Code Execution - CVE-2012-1823"
+    ],
+    "risk":"Tinggi",
+    "description": "Beberapa versi PHP ketika dikonfigurasi menggunakan CGI tidak menangani query string tanpa tanda '=' dengan benar, yang dapat memungkinkan eksekusi perintah sistem operasi.",
+    "solution": "Tingkatkan ke versi stabil terbaru dari PHP, atau gunakan web server Apache dan modul mod_rewrite untuk memfilter permintaan berbahaya dengan menggunakan direktif RewriteCond dan RewriteRule."
+  },
+  {
+    "alert_name": "External Redirect",
+    "pattern_match": [
+      "External Redirect"
+    ],
+    "risk":"Tinggi",
+    "description": "URL redirector adalah fitur umum di situs web yang mengarahkan pengguna dari satu alamat ke alamat lain. Ini biasanya digunakan untuk menjaga agar tautan lama tetap berfungsi atau untuk kebutuhan seperti pembagian beban server dan pelacakan tautan keluar. Namun, fitur ini juga bisa disalahgunakan oleh penyerang dalam serangan phishing, yaitu menipu pengguna agar mereka mengira akan mengunjungi situs yang aman, padahal diarahkan ke situs berbahaya. Meskipun redirector tidak selalu jadi celah keamanan, tetap bisa dimanfaatkan untuk tujuan jahat.",
+    "solution": "1. Gunakan allow list \n2. Validasi input secara ketat \n3. Hindari penggunaan input langsung dari pengguna untuk redirect"
+  },
+  {
+    "alert_name": "Buffer Overflow",
+    "pattern_match": [
+      "Buffer Overflow"
+    ],
+    "risk":"Sedang",
+    "description": "Buffer overflow adalah kesalahan saat program menerima data melebihi kapasitas memori yang disediakan.",
+    "solution": "Perbaiki program latar belakang dengan memeriksa panjang data yang dikembalikan (return length) secara benar."
+  },
+  {
+    "alert_name": "Format String Error",
+    "pattern_match": [
+      "Format String Error"
+    ],
+    "risk":"Sedang",
+    "description": "Format String Error terjadi saat data yang dimasukkan pengguna diperlakukan seperti perintah oleh aplikasi. Ini bisa membuat penyerang menjalankan kode berbahaya atau membaca data sensitif dari memori aplikasi.",
+    "solution": "Program harus ditulis ulang dengan cara menghapus karakter-karakter berbahaya (bad characters) dari input yang masuk. Karakter ini bisa digunakan penyerang untuk menyusupi atau merusak proses aplikasi."
+  },
+  {
+    "alert_name": "CRLF Injection",
+    "pattern_match": [
+      "CRLF Injection"
+    ],
+    "risk":"Sedang",
+    "description": "Cookie dapat diset melalui injeksi CRLF. Kemungkinan juga bisa menyetel header HTTP respons sembarangan. Selain itu, dengan membuat respons yang disuntikkan secara khusus menggunakan skrip lintas situs (cross-site script), celah kerentanan cache poisoning juga mungkin ada.",
+    "solution": "Periksa tipe parameter yang dikirim dengan teliti. Jangan biarkan injeksi CRLF terjadi dengan cara memfilter karakter CRLF."
+  },
+  {
+    "alert_name": "Parameter Tampering",
+    "pattern_match": [
+      "Parameter Tampering"
+    ],
+    "risk":"Sedang",
+    "description": "Manipulasi parameter menyebabkan munculnya halaman error atau jejak tumpukan (stack trace) Java. Ini menandakan kurangnya penanganan kesalahan dan bisa jadi celah untuk eksploitasi lebih lanjut.",
+    "solution": "Identifikasi penyebab error dan perbaiki. Jangan percayai input dari sisi klien, lakukan validasi ketat di sisi server. Selain itu, tangani exception dengan baik dan gunakan halaman error umum 500 untuk kesalahan server internal."
+  },
+  {
+    "alert_name": "Server Side Include",
+    "pattern_match": [
+      "Server Side Include"
+    ],
+    "risk":"Sedang",
+    "description": "Beberapa parameter bisa membuat perintah Server Side Include (SSI) dijalankan. Hal ini berisiko memungkinkan koneksi ke database atau kode sembarangan dieksekusi.",
+    "solution": "Jangan percaya input dari sisi klien, selalu lakukan pengecekan ketat di sisi server. Nonaktifkan Server Side Includes (SSI). Ikuti panduan manual untuk mematikan SSI. Jalankan web server atau aplikasi dengan hak akses paling minimal (least privilege). Untuk Apache, matikan pengaturan berikut: \n1. Options Indexes FollowSymLinks Includes \n2. AddType application/x-httpd-cgi .cgi \n3. AddType text/x-server-parsed-html .html"
+  },
+  {
+    "alert_name": "Cross Site Scripting (Reflected)",
+    "pattern_match": [
+      "Cross Site Scripting (Reflected)"
+    ],
+    "risk":"Tinggi",
+    "description": "Cross-site Scripting (XSS) adalah serangan yang memasukkan kode berbahaya ke dalam browser pengguna melalui situs web, memungkinkan pencurian data sensitif seperti cookie atau pengalihan browser ke halaman palsu. Ada tiga jenis XSS: non-persistent (kode hanya sementara), persistent (kode tersimpan di server), dan DOM-based (serangan melalui manipulasi halaman di sisi klien). Serangan ini merusak kepercayaan antara pengguna dan situs web serta bisa terjadi lewat link jahat atau formulir yang dikirim tanpa sepengetahuan korban.",
+    "solution": "Gunakan library atau framework yang sudah terpercaya untuk mencegah XSS dengan cara mengamankan data yang ditampilkan di web. Pastikan data dari pengguna selalu diperiksa dan hanya terima data yang benar sesuai aturan (allow list). Lakukan pemeriksaan ini baik di sisi pengguna (klien) maupun di server supaya lebih aman. Selalu pakai pengkodean karakter seperti UTF-8 supaya web tidak mudah diserang. Untuk keamanan cookie, aktifkan fitur HttpOnly agar tidak bisa diakses oleh skrip jahat. "
+  },
+  {
+    "alert_name": "Cross Site Scripting (Persistent)",
+    "pattern_match": [
+      "Cross Site Scripting (Persistent)"
+    ],
+    "risk":"Tinggi",
+    "description": "Cross-site Scripting (XSS) adalah serangan yang memasukkan kode berbahaya ke dalam browser pengguna melalui situs web, memungkinkan pencurian data sensitif seperti cookie atau pengalihan browser ke halaman palsu. Ada tiga jenis XSS: non-persistent (kode hanya sementara), persistent (kode tersimpan di server), dan DOM-based (serangan melalui manipulasi halaman di sisi klien). Serangan ini merusak kepercayaan antara pengguna dan situs web serta bisa terjadi lewat link jahat atau formulir yang dikirim tanpa sepengetahuan korban.",
+    "solution": "Gunakan library atau framework yang sudah terpercaya untuk mencegah XSS dengan cara mengamankan data yang ditampilkan di web. Pastikan data dari pengguna selalu diperiksa dan hanya terima data yang benar sesuai aturan (allow list). Lakukan pemeriksaan ini baik di sisi pengguna (klien) maupun di server supaya lebih aman. Selalu pakai pengkodean karakter seperti UTF-8 supaya web tidak mudah diserang. Untuk keamanan cookie, aktifkan fitur HttpOnly agar tidak bisa diakses oleh skrip jahat. "
+  },
+  {
+    "alert_name": "Cross Site Scripting (Persistent) - Prime",
+    "pattern_match": [
+      "Cross Site Scripting (Persistent) - Prime"
+    ],
+    "risk":"Informational",
+    "description": "-",
+    "solution": "-"
+  },
+  {
+    "alert_name": "Cross Site Scripting (Persistent) - Spider",
+    "pattern_match": [
+      "Cross Site Scripting (Persistent) - Spider"
+    ],
+    "risk":"Informational",
+    "description": "-",
+    "solution": "-"
+  },
+  {
+    "alert_name": "SQL Injection",
+    "pattern_match": [
+      "SQL Injection"
+    ],
+    "risk":"Tinggi",
+    "description": "SQL Injection adalah serangan keamanan di mana penyerang memasukkan kode SQL berbahaya ke dalam input aplikasi yang kemudian dijalankan oleh database. Tujuannya adalah untuk mengakses, mengubah, atau menghapus data tanpa izin, bahkan bisa mengambil alih kendali database. Biasanya terjadi karena aplikasi tidak memvalidasi atau membersihkan input pengguna dengan benar sebelum memasukkannya ke dalam query SQL.",
+    "solution": "1. Gunakan validasi dan sanitasi input \n2. Gunakan ORM (Object-Relational Mapping) \n3. Batasi hak akses database"
+  },
+  {
+    "alert_name": "Cross Site Scripting (DOM Based)",
+    "pattern_match": [
+      "Cross Site Scripting (DOM Based)"
+    ],
+    "risk":"Tinggi",
+    "description": "Cross-site Scripting (XSS) adalah serangan yang memasukkan kode berbahaya ke dalam browser pengguna melalui situs web, memungkinkan pencurian data sensitif seperti cookie atau pengalihan browser ke halaman palsu. Ada tiga jenis XSS: non-persistent (kode hanya sementara), persistent (kode tersimpan di server), dan DOM-based (serangan melalui manipulasi halaman di sisi klien). Serangan ini merusak kepercayaan antara pengguna dan situs web serta bisa terjadi lewat link jahat atau formulir yang dikirim tanpa sepengetahuan korban.",
+    "solution": "Gunakan library atau framework yang sudah terpercaya untuk mencegah XSS dengan cara mengamankan data yang ditampilkan di web. Pastikan data dari pengguna selalu diperiksa dan hanya terima data yang benar sesuai aturan (allow list). Lakukan pemeriksaan ini baik di sisi pengguna (klien) maupun di server supaya lebih aman. Selalu pakai pengkodean karakter seperti UTF-8 supaya web tidak mudah diserang. Untuk keamanan cookie, aktifkan fitur HttpOnly agar tidak bisa diakses oleh skrip jahat. "
+  },
+  {
+    "alert_name": ".htaccess Information Leak",
+    "pattern_match": [
+      ".htaccess Information Leak"
+    ],
+    "risk":"Sedang",
+    "description": "File .htaccess adalah file konfigurasi yang digunakan untuk mengubah pengaturan pada server Apache. Dengan file ini, kita bisa mengaktifkan atau menonaktifkan fitur-fitur tertentu yang disediakan oleh Apache tanpa harus mengubah konfigurasi utama server.",
+    "solution": "Pastikan .htaccess tidak dapat diakses"
+  },
+  {
+    "alert_name": ".env Information Leak",
+    "pattern_match": [
+      ".env Information Leak"
+    ],
+    "risk":"Sedang",
+    "description": "File .env yang ditemukan di server biasanya berisi data penting seperti username dan password admin, kunci API, atau konfigurasi rahasia lainnya. Jika file ini bisa diakses oleh publik, maka informasi sensitif tersebut bisa bocor dan disalahgunakan oleh pihak tidak bertanggung jawab. Jadi, file .env harus dijaga kerahasiaannya dan tidak boleh dipublikasikan atau diletakkan di lokasi yang bisa diakses oleh umum.",
+    "solution": "Pastikan .env tidak dapat diakses"
+  },
+  {
+    "alert_name": "Hidden File Found",
+    "pattern_match": [
+      "Hidden File Found",
+      "hidden file"
+    ],
+    "risk":"Sedang",
+    "description": "File sensitif ditemukan dapat diakses atau tersedia secara publik. Hal ini berisiko membocorkan informasi penting seperti data admin, konfigurasi, atau kredensial yang dapat dimanfaatkan oleh pihak jahat untuk menyerang sistem lebih lanjut atau melakukan rekayasa sosial. Jadi, file-file sensitif harus dilindungi dan tidak boleh bisa diakses sembarangan.",
+    "solution": "Pertimbangkan apakah komponen tersebut benar-benar dibutuhkan di lingkungan produksi. Jika tidak diperlukan, sebaiknya matikan atau nonaktifkan saja. Namun jika memang diperlukan, pastikan akses ke komponen itu hanya bisa dilakukan dengan autentikasi dan otorisasi yang tepat, atau batasi aksesnya hanya dari sistem internal atau alamat IP tertentu saja."
+  },
+  {
+    "alert_name": "Hidden File Found",
+    "pattern_match": [
+      "Hidden File Found",
+      "hidden file"
+    ],
+    "risk":"Sedang",
+    "description": "File sensitif ditemukan dapat diakses atau tersedia secara publik. Hal ini berisiko membocorkan informasi penting seperti data admin, konfigurasi, atau kredensial yang dapat dimanfaatkan oleh pihak jahat untuk menyerang sistem lebih lanjut atau melakukan rekayasa sosial. Jadi, file-file sensitif harus dilindungi dan tidak boleh bisa diakses sembarangan.",
+    "solution": "Pertimbangkan apakah komponen tersebut benar-benar dibutuhkan di lingkungan produksi. Jika tidak diperlukan, sebaiknya matikan atau nonaktifkan saja. Namun jika memang diperlukan, pastikan akses ke komponen itu hanya bisa dilakukan dengan autentikasi dan otorisasi yang tepat, atau batasi aksesnya hanya dari sistem internal atau alamat IP tertentu saja."
+  },
+  {
+    "alert_name": "Authentication Request Identified",
+    "pattern_match": [
+      "Authentication Request Identified"
+    ],
+    "risk":"Informational",
+    "description": "Permintaan yang diberikan telah diidentifikasi sebagai permintaan autentikasi. Kolom 'Other Info' berisi sekumpulan baris key=value yang mengidentifikasi field-field yang relevan. Jika permintaan berada dalam konteks yang memiliki Metode Autentikasi yang disetel ke 'Deteksi Otomatis', maka aturan ini akan mengubah metode autentikasi agar sesuai dengan permintaan yang telah diidentifikasi.",
+    "solution": "Ini adalah peringatan informasional, bukan sebuah kerentanan, sehingga tidak ada yang perlu diperbaiki"
+  },
+  {
+    "alert_name": "Session Management Response Identified",
+    "pattern_match": [
+      "session managemenet response identified"
+    ],
+    "risk":"Informational",
+    "description": "Respons yang diberikan telah diidentifikasi mengandung token manajemen sesi. Kolom 'Other Info' berisi sekumpulan token header yang dapat digunakan dalam Metode Manajemen Sesi berbasis Header. Jika permintaan berada dalam konteks yang memiliki Metode Manajemen Sesi yang disetel ke 'Deteksi Otomatis', maka aturan ini akan mengubah metode manajemen sesi untuk menggunakan token-token yang telah diidentifikasi.",
+    "solution": "Ini adalah peringatan informasional, bukan sebuah kerentanan, sehingga tidak ada yang perlu diperbaiki"
+  }
+]
