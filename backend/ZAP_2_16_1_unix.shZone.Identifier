@@ -1,4 +1,0 @@
-[ZoneTransfer]
-ZoneId=3
-ReferrerUrl=https://github.com/zaproxy/zaproxy/releases
-HostUrl=https://objects.githubusercontent.com/github-production-release-asset-2e65be/36817565/3add8096-9e2f-4c62-bc6d-c31948f0dff6?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20250513%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250513T032358Z&X-Amz-Expires=300&X-Amz-Signature=afb010d47429bc326fefad22266cc72f8e4aea8362690510ccd4bf458da1d40a&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3DZAP_2_16_1_unix.sh&response-content-type=application%2Foctet-stream
